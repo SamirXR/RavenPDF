@@ -183,7 +183,7 @@
       margin-left: 10px;
     }
 
-    /* vertical line */
+    /* vertical line (desktop / tablet) */
     .flow-wrapper::before {
       content: "";
       position: absolute;
@@ -302,6 +302,7 @@
       flex-wrap: wrap;
       gap: 6px;
       align-items: center;
+      justify-content: flex-end;
     }
 
     .chip {
@@ -404,7 +405,7 @@
       font-size: 14px;
     }
 
-    /* collapsed state for small screens / click */
+    /* collapsed state */
     .step-card.collapsed .step-body {
       display: none;
     }
@@ -413,15 +414,30 @@
       opacity: 0.6;
     }
 
+    /* Tablet / smaller desktop tweaks */
     @media (max-width: 720px) {
+      body {
+        padding: 20px 10px;
+      }
+
       .app-shell {
-        padding: 20px 16px 22px;
+        padding: 18px 14px 20px;
         border-radius: 22px;
       }
 
       header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .subtitle {
+        max-width: 100%;
+      }
+
+      .legend {
+        gap: 6px;
       }
 
       .flow-wrapper {
@@ -440,6 +456,97 @@
       .step-body {
         grid-template-columns: minmax(0, 1fr);
         margin-top: 8px;
+      }
+
+      .step-meta {
+        justify-content: flex-start;
+      }
+    }
+
+    /* Phone-first adjustments */
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 8px;
+      }
+
+      .app-shell {
+        padding: 16px 12px 18px;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .subtitle {
+        font-size: 13px;
+      }
+
+      .flow-wrapper {
+        padding-left: 0;
+        margin-left: 0;
+      }
+
+      .flow-wrapper::before {
+        display: none; /* no vertical line on tiny screens */
+      }
+
+      .step {
+        margin-bottom: 12px;
+      }
+
+      .step-node {
+        position: relative;    /* becomes inline, not pinned to the side */
+        left: 0;
+        top: 0;
+        margin-bottom: 6px;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+      }
+
+      .step-card {
+        margin-left: 0;        /* full-width card */
+        padding: 12px 12px 12px;
+      }
+
+      .step-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .step-title {
+        font-size: 14px;
+      }
+
+      .step-label {
+        font-size: 10px;
+      }
+
+      .chip {
+        font-size: 10px;
+        padding: 2px 8px;
+      }
+
+      .chip-output {
+        max-width: 100%;
+      }
+
+      .bullet-list {
+        font-size: 12px;
+      }
+
+      .output-block {
+        font-size: 11px;
+      }
+
+      .output-fields {
+        font-size: 10px;
+      }
+
+      .hint {
+        font-size: 10px;
       }
     }
   </style>
@@ -835,7 +942,7 @@
         </section>
 
         <div class="hint">
-          <span>⌘</span> Click any step card to collapse/expand its details when presenting this flow.
+          <span>⌘</span> Tap any step card to collapse/expand its details when presenting this flow.
         </div>
       </main>
     </div>
@@ -843,7 +950,15 @@
 
   <script>
     // Simple interaction: toggle collapse on click
-    document.querySelectorAll(".step-card").forEach((card) => {
+    const cards = document.querySelectorAll(".step-card");
+    const isMobile = window.innerWidth <= 720;
+
+    // On mobile, start collapsed to make scrolling easier
+    if (isMobile) {
+      cards.forEach(card => card.classList.add("collapsed"));
+    }
+
+    cards.forEach((card) => {
       card.addEventListener("click", (e) => {
         // avoid toggling when selecting text
         if (window.getSelection().toString().length > 0) return;
